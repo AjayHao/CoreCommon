@@ -1,5 +1,6 @@
 package com.ajayhao.core.util.test;
 
+import com.ajayhao.core.enums.BizCode;
 import com.ajayhao.core.util.CoreObjectUtils;
 import com.ajayhao.core.util.test.testcase.Apkind;
 import com.ajayhao.core.util.test.testcase.MHTStepCode;
@@ -154,13 +155,62 @@ public class CoreObjectUtilsTest {
 
     @Test
     public void test_json2ObjectExt_subAbstractCodedEnum() {
+
         String jsonStr = "\"022\"";
         Apkind a = CoreObjectUtils.json2ObjectExt(jsonStr,Apkind.class);
         Assert.assertEquals(a.code(), "022");
         Assert.assertEquals(a.desc(), "申购申请");
         Assert.assertEquals(a.name(), "PURCHAS_APP");
+
+        BizCode b = CoreObjectUtils.json2ObjectExt(jsonStr,BizCode.class);
+        Assert.assertEquals(b.code(), "022");
+        Assert.assertEquals(b.desc(), "不支持的操作");
+        Assert.assertEquals(b.name(), "UnsupportedOperation");
     }
 
+    @Test
+    public void test_json2Object_mixDeserialze(){
+        String enum_jsonStr = "{\"name\":\"0003\",\"desc\":\"快赎\"}";
+        MHTStepCode enum_a = CoreObjectUtils.json2Object(enum_jsonStr,MHTStepCode.class);
+        Assert.assertEquals(enum_a.name(), "0003");
+        Assert.assertEquals(enum_a.desc(), "快赎");
+
+        MHTStepCode enum_aa = CoreObjectUtils.json2ObjectExt(enum_jsonStr,MHTStepCode.class);
+        Assert.assertEquals(enum_aa.name(), "0003");
+        Assert.assertEquals(enum_aa.desc(), "快赎");
+
+        String enum_valStr = "\"0003\"";
+        MHTStepCode enum_v = CoreObjectUtils.json2Object(enum_valStr,MHTStepCode.class);
+        Assert.assertEquals(enum_v.name(), "0003");
+        Assert.assertEquals(enum_v.desc(), "快赎");
+
+        MHTStepCode enum_vv = CoreObjectUtils.json2ObjectExt(enum_valStr,MHTStepCode.class);
+        Assert.assertEquals(enum_vv.name(), "0003");
+        Assert.assertEquals(enum_vv.desc(), "快赎");
+
+        String jsonStr = "{\"name\":\"PURCHAS_APP\",\"desc\":\"申购申请\",\"code\":\"022\"}";
+        Apkind a = CoreObjectUtils.json2Object(jsonStr,Apkind.class);
+        Assert.assertEquals(a.code(), "022");
+        Assert.assertEquals(a.desc(), "申购申请");
+        Assert.assertEquals(a.name(), "PURCHAS_APP");
+
+        Apkind aa = CoreObjectUtils.json2ObjectExt(jsonStr,Apkind.class);
+        Assert.assertEquals(aa.code(), "022");
+        Assert.assertEquals(aa.desc(), "申购申请");
+        Assert.assertEquals(aa.name(), "PURCHAS_APP");
+
+        String valStr = "\"022\"";
+        Apkind a2 = CoreObjectUtils.json2Object(valStr,Apkind.class);
+        Assert.assertEquals(a2.code(), "022");
+        Assert.assertEquals(a2.desc(), "申购申请");
+        Assert.assertEquals(a2.name(), "PURCHAS_APP");
+
+        Apkind aa2 = CoreObjectUtils.json2ObjectExt(valStr,Apkind.class);
+        Assert.assertEquals(aa2.code(), "022");
+        Assert.assertEquals(aa2.desc(), "申购申请");
+        Assert.assertEquals(aa2.name(), "PURCHAS_APP");
+
+    }
 
     @AfterClass
     public void afterClass() {

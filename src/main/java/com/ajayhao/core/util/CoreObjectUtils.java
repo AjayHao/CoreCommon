@@ -46,7 +46,7 @@ public abstract class CoreObjectUtils {
     public static <T> T newInstance(Class<T> clazz) {
         try {
             Constructor<T> defaultConst = clazz.getDeclaredConstructor(null);
-            if(defaultConst == null) {
+            if (defaultConst == null) {
                 CoreCommonUtils.raiseBizException(BizCode.ParamTypeError, "类型没有默认构造函数");
             }
             defaultConst.setAccessible(true);
@@ -68,7 +68,7 @@ public abstract class CoreObjectUtils {
      * @param obj
      * @return
      */
-    public static String object2Json(Object obj){
+    public static String object2Json(Object obj) {
         try {
             ObjectMapper mapper = new ObjectMapper();
             mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
@@ -88,7 +88,7 @@ public abstract class CoreObjectUtils {
      * @param obj
      * @return
      */
-    public static String object2JsonExt(Object obj){
+    public static String object2JsonExt(Object obj) {
         try {
             ObjectMapper mapper = new ObjectMapper();
             mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
@@ -110,7 +110,7 @@ public abstract class CoreObjectUtils {
      * @param <T>
      * @return
      */
-    public static <T> T json2Object(String json,Class<T> clazz) {
+    public static <T> T json2Object(String json, Class<T> clazz) {
         if (json == null || json.isEmpty()) {
             return (T) null;
         }
@@ -122,7 +122,7 @@ public abstract class CoreObjectUtils {
             Module m = resolveDeserializerModule(clazz);
             mapper.registerModule(m);
             Object bean = mapper.readValue(json, clazz);
-            return (T)bean;
+            return (T) bean;
         } catch (Exception e) {
             LOG.warn("json to Object error: ", e);
         }
@@ -140,13 +140,13 @@ public abstract class CoreObjectUtils {
      * @param <T>
      * @return
      */
-    public static <T> T json2ObjectExt(String json,Class<T> clazz) {
+    public static <T> T json2ObjectExt(String json, Class<T> clazz) {
         if (json == null || json.isEmpty()) {
             return (T) null;
         }
 
         try {
-            return json2Object(json,clazz);
+            return json2Object(json, clazz);
         } catch (Exception e) {
             LOG.warn("json to Object Ext error: ", e);
         }
@@ -164,13 +164,13 @@ public abstract class CoreObjectUtils {
      */
     public static <T> T getField(Object object, Field field) {
         boolean isStatic = CoreReflectionUtils.isStatic(field);
-        if(field == null || (!isStatic && object == null)) {
+        if (field == null || (!isStatic && object == null)) {
             return null;
         }
 
         try {
             CoreReflectionUtils.makeAccessible(field);
-            return (T)field.get(object);
+            return (T) field.get(object);
         } catch (Exception e) {
             LOG.warn("获取field值异常", e);
         }
@@ -187,7 +187,7 @@ public abstract class CoreObjectUtils {
      * @return
      */
     public static <T> T getField(Object object, String fieldName) {
-        if(object == null || StringUtils.isEmpty(fieldName)) {
+        if (object == null || StringUtils.isEmpty(fieldName)) {
             return null;
         }
 
@@ -205,7 +205,7 @@ public abstract class CoreObjectUtils {
      */
     public static void setField(Object object, Field field, Object value) {
         boolean isStatic = CoreReflectionUtils.isStatic(field);
-        if(field == null || (!isStatic && object == null)) {
+        if (field == null || (!isStatic && object == null)) {
             return;
         }
 
@@ -225,7 +225,7 @@ public abstract class CoreObjectUtils {
      * @param value
      */
     public static void setField(Object object, String fieldName, Object value) {
-        if(object == null || StringUtils.isEmpty(fieldName)) {
+        if (object == null || StringUtils.isEmpty(fieldName)) {
             return;
         }
 
@@ -244,13 +244,13 @@ public abstract class CoreObjectUtils {
      */
     public static <T> T invokeMethod(Object object, Method method, Object... arguments) {
         boolean isStatic = CoreReflectionUtils.isStatic(method);
-        if(method == null || (!isStatic && object == null)) {
+        if (method == null || (!isStatic && object == null)) {
             return null;
         }
 
         try {
             CoreReflectionUtils.makeAccessible(method);
-            return (T)method.invoke(object, arguments);
+            return (T) method.invoke(object, arguments);
         } catch (Exception e) {
             LOG.warn("调用方法异常", e);
         }
@@ -268,50 +268,50 @@ public abstract class CoreObjectUtils {
      * @return
      */
     public static <T> T invokeMethod(Object object, String methodName, Object... arguments) {
-        if(object == null || StringUtils.isEmpty(methodName)) {
+        if (object == null || StringUtils.isEmpty(methodName)) {
             return null;
         }
 
         final int argLen = arguments.length;
         final boolean argAllNull = CoreArrayUtils.isAllNull(arguments); // 所有参数都为null
-        
+
         final Set<Method> methods = CoreReflectionUtils.getAllMethods(object.getClass());
-        Set<Method>  candidates = new HashSet<>(5, 1F); // 候选方法集合；
+        Set<Method> candidates = new HashSet<>(5, 1F); // 候选方法集合；
         Method m = null;
-        for(Method method : methods) {
+        for (Method method : methods) {
             final Class<?>[] argTypes = method.getParameterTypes();
             final boolean nameIdentical = method.getName().equals(methodName);
 
-            if(argTypes.length != argLen || !nameIdentical) {
+            if (argTypes.length != argLen || !nameIdentical) {
                 continue;
-            } else if(argAllNull) {
+            } else if (argAllNull) {
                 candidates.add(method); // 先保存，需要到后面进行统一的检查；
                 continue;
             }
 
             final MatchType type = CoreArrayUtils.compatible(arguments, argTypes);
-            if(type == MatchType.Identical) { // 完全一致，则不需要继续查找；
+            if (type == MatchType.Identical) { // 完全一致，则不需要继续查找；
                 m = method;
                 break;
-            } else if(type == MatchType.Similar) {
+            } else if (type == MatchType.Similar) {
                 candidates.add(method); // 参数兼容；
             }
         }
 
-        if(m != null) { // 精确匹配的函数
+        if (m != null) { // 精确匹配的函数
             return invokeMethod(object, m, arguments);
         }
 
-        if(candidates.size() == 1) {
+        if (candidates.size() == 1) {
             m = candidates.iterator().next(); // 如果参数全部为null的情况，则使用该方法；
-        } else if(candidates.size() > 1) {
+        } else if (candidates.size() > 1) {
             LOG.warn("没有找到兼容的方法：" + methodName + ", 参数个数： " + argLen
                     + "；参数无法精确定位，无法找到匹配的重载版本！！");
 
             return null;
         }
 
-        if(m == null) {
+        if (m == null) {
             LOG.warn("没有找到兼容的方法：" + methodName + ", 参数个数： " + argLen);
 
             return null;
@@ -327,25 +327,25 @@ public abstract class CoreObjectUtils {
      * @return
      */
     public static Object defaultValue(Class<?> type) {
-        if(type == null) {
+        if (type == null) {
             CoreCommonUtils.raiseBizException(BizCode.ParamError, "类型不能为空");
         }
 
-        if(type == int.class) {
+        if (type == int.class) {
             return 0;
-        } else if(type == byte.class) {
+        } else if (type == byte.class) {
             return (byte) 0;
-        } else if(type == char.class) {
+        } else if (type == char.class) {
             return (char) 0;
-        } else if(type == short.class) {
+        } else if (type == short.class) {
             return (short) 0;
-        } else if(type == long.class) {
+        } else if (type == long.class) {
             return 0L;
-        } else if(type == double.class) {
+        } else if (type == double.class) {
             return 0D;
-        } else if(type == float.class) {
+        } else if (type == float.class) {
             return (float) 0;
-        } else if(type == boolean.class) {
+        } else if (type == boolean.class) {
             return false;
         }
 
@@ -368,14 +368,14 @@ public abstract class CoreObjectUtils {
 
 
     static {
-        sm = new SimpleModule("serializeModule", new Version(1, 0, 0, "snapshot",null,null));
+        sm = new SimpleModule("serializeModule", new Version(1, 0, 0, "snapshot", null, null));
         sm.addSerializer(AbstractEnum.class, new JsonSerializer<AbstractEnum>() {
             @Override
             public void serialize(AbstractEnum abstractEnum, JsonGenerator jsonGenerator
                     , SerializerProvider serializerProvider) throws IOException, JsonProcessingException {
-                if(abstractEnum == null) {
+                if (abstractEnum == null) {
                     jsonGenerator.writeNull();
-                } else if(abstractEnum instanceof AbstractCodedEnum) {
+                } else if (abstractEnum instanceof AbstractCodedEnum) {
                     jsonGenerator.writeString(((AbstractCodedEnum) abstractEnum).code());
                 } else {
                     jsonGenerator.writeString(abstractEnum.name());
@@ -385,23 +385,29 @@ public abstract class CoreObjectUtils {
     }
 
     private static <T> Module resolveDeserializerModule(Class<T> clazz) {
-        SimpleModule de_sm = new SimpleModule("deserializeModule1", new Version(1, 0, 0, "snapshot",null,null));
-        if(AbstractCodedEnum.class.isAssignableFrom(clazz)) {
+        SimpleModule de_sm = new SimpleModule("deserializeModule1", new Version(1, 0, 0, "snapshot", null, null));
+        if (AbstractCodedEnum.class.isAssignableFrom(clazz)) {
             JsonDeserializer des = deserializers.get(clazz);
-            if(des == null) {
+            if (des == null) {
                 final CodedEnumJsonDeserializer deserializer =
-                        new CodedEnumJsonDeserializer((Class<AbstractCodedEnum>)clazz);
+                        new CodedEnumJsonDeserializer((Class<AbstractCodedEnum>) clazz);
                 des = deserializers.putIfAbsent(clazz, deserializer);
-                de_sm.addDeserializer(clazz,(des != null) ? des : (JsonDeserializer)deserializer);
+                if(des == null){
+                    des = deserializer;
+                }
             }
-        } else if(AbstractEnum.class.isAssignableFrom(clazz)) {
+            de_sm.addDeserializer(clazz, des);
+        } else if (AbstractEnum.class.isAssignableFrom(clazz)) {
             JsonDeserializer des = deserializers.get(clazz);
-            if(des == null) {
+            if (des == null) {
                 final EnumJsonDeserializer deserializer =
-                        new EnumJsonDeserializer((Class<AbstractEnum>)clazz);
+                        new EnumJsonDeserializer((Class<AbstractEnum>) clazz);
                 des = deserializers.putIfAbsent(clazz, deserializer);
-                de_sm.addDeserializer(clazz,(des != null) ? des : (JsonDeserializer)deserializer);
+                if(des == null){
+                    des = deserializer;
+                }
             }
+            de_sm.addDeserializer(clazz, des);
         }
         return de_sm;
     }
@@ -429,12 +435,15 @@ public abstract class CoreObjectUtils {
         }
 
         protected abstract T doDeserialize(Map map);
+
         protected abstract T doDeserialize(String value);
 
         protected Class<T> getClazz() {
             return clazz;
         }
-    };
+    }
+
+    ;
 
     private static class CodedEnumJsonDeserializer extends AbstractEnumJsonDeserializer<AbstractCodedEnum> {
         public CodedEnumJsonDeserializer(Class<AbstractCodedEnum> clazz) {
@@ -443,17 +452,17 @@ public abstract class CoreObjectUtils {
 
         @Override
         protected AbstractCodedEnum doDeserialize(Map coded) {
-            if(coded != null) {
-                return AbstractCodedEnum.valueByCode(getClazz(), (String)coded.get("code"));
+            if (coded != null) {
+                return AbstractCodedEnum.valueByCode(getClazz(), (String) coded.get("code"));
             }
             return null;
         }
 
         @Override
         protected AbstractCodedEnum doDeserialize(String value) {
-            if(value != null) {
+            if (value != null) {
                 AbstractCodedEnum $enum = AbstractCodedEnum.valueByCode(getClazz(), value);
-                if($enum == null) {
+                if ($enum == null) {
                     return AbstractCodedEnum.valueOf(getClazz(), value);
                 }
                 return $enum;
@@ -469,7 +478,7 @@ public abstract class CoreObjectUtils {
 
         @Override
         protected AbstractEnum doDeserialize(Map $enum) {
-            return valueOf((String)$enum.get("name"));
+            return valueOf((String) $enum.get("name"));
         }
 
         @Override
@@ -478,7 +487,7 @@ public abstract class CoreObjectUtils {
         }
 
         private AbstractEnum valueOf(String value) {
-            if(value != null) {
+            if (value != null) {
                 return AbstractEnum.valueOf(getClazz(), value);
             }
             return null;
