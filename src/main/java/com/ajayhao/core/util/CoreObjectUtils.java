@@ -13,30 +13,8 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.databind.deser.Deserializers;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.ser.std.JsonValueSerializer;
 import org.apache.commons.lang3.StringUtils;
-/*import org.codehaus.jackson.JsonGenerator;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.Version;
-import org.codehaus.jackson.annotate.JsonAutoDetect;
-import org.codehaus.jackson.annotate.JsonMethod;
-import org.codehaus.jackson.map.BeanProperty;
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.DeserializationContext;
-import org.codehaus.jackson.map.JsonDeserializer;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.JsonSerializer;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
-import org.codehaus.jackson.map.SerializerProvider;
-import org.codehaus.jackson.map.deser.StdDeserializerProvider;
-import org.codehaus.jackson.map.module.SimpleModule;
-import org.codehaus.jackson.type.JavaType;*/
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,7 +96,7 @@ public abstract class CoreObjectUtils {
             mapper.registerModule(sm);
             return mapper.writeValueAsString(obj);
         } catch (Exception e) {
-            LOG.warn("Object to Json error: ", e);
+            LOG.warn("Object to Json Ext error: ", e);
         }
 
         return null;
@@ -141,7 +119,6 @@ public abstract class CoreObjectUtils {
             ObjectMapper mapper = new ObjectMapper();
             mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            //mapper.setDeserializerProvider(dp0);
             Module m = resolveDeserializerModule(clazz);
             mapper.registerModule(m);
             Object bean = mapper.readValue(json, clazz);
@@ -169,17 +146,9 @@ public abstract class CoreObjectUtils {
         }
 
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
-            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            //mapper.registerModule(sm);
-            //mapper.setDeserializerProvider(dp);
-            Module m =  resolveDeserializerModuleExt(clazz);
-            mapper.registerModule(m);
-            Object bean = mapper.readValue(json, clazz);
-            return (T)bean;
+            return json2Object(json,clazz);
         } catch (Exception e) {
-            LOG.warn("json to Object error: ", e);
+            LOG.warn("json to Object Ext error: ", e);
         }
 
         return null;
@@ -433,78 +402,11 @@ public abstract class CoreObjectUtils {
                 des = deserializers.putIfAbsent(clazz, deserializer);
                 de_sm.addDeserializer(clazz,(des != null) ? des : (JsonDeserializer)deserializer);
             }
-        }/*else{
-            de_sm.addDeserializer(clazz, new TypeDeserializer());
-        }*/
-        return de_sm;
-    }
-
-    private static <T> Module resolveDeserializerModuleExt(Class<T> clazz) {
-        SimpleModule de_sm = new SimpleModule("deserializeModule2", new Version(1, 0, 0, "snapshot",null,null));
-        if(AbstractCodedEnum.class.isAssignableFrom(clazz)) {
-            de_sm.addDeserializer(clazz, enumType4Coded);
-        } else if(AbstractEnum.class.isAssignableFrom(clazz)) {
-            JsonDeserializer des = deserializers.get(clazz);
-            if(des == null) {
-                final EnumJsonDeserializer deserializer =
-                        new EnumJsonDeserializer((Class<AbstractEnum>)clazz);
-                des = deserializers.putIfAbsent(clazz, deserializer);
-                de_sm.addDeserializer(clazz,(des != null) ? des : (JsonDeserializer)deserializer);
-            }
         }
         return de_sm;
     }
-   /* private static StdDeserializerProvider dp0 = new StdDeserializerProvider() {
-        @Override
-        public JsonDeserializer<Object> findValueDeserializer(
-                DeserializationConfig config, JavaType propertyType
-                , BeanProperty property) throws JsonMappingException {
-            if(AbstractCodedEnum.class.isAssignableFrom(propertyType.getRawClass())) {
-                JsonDeserializer des = deserializers.get((propertyType.getRawClass()));
-                if(des == null) {
-                    final CodedEnumJsonDeserializer deserializer =
-                            new CodedEnumJsonDeserializer((Class<AbstractCodedEnum>) (propertyType.getRawClass()));
-                    des = deserializers.putIfAbsent(propertyType.getRawClass(), deserializer);
-                    return des != null ? des : deserializer;
-                }
-                return des;
-            } else if(AbstractEnum.class.isAssignableFrom(propertyType.getRawClass())) {
-                JsonDeserializer des = deserializers.get((propertyType.getRawClass()));
-                if(des == null) {
-                    final EnumJsonDeserializer deserializer =
-                            new EnumJsonDeserializer((Class<AbstractEnum>) (propertyType.getRawClass()));
-                    des =deserializers.putIfAbsent(propertyType.getRawClass(), deserializer);
-
-                    return des != null ? des : deserializer;
-                }
-                return des;
-            }
-
-            return super.findValueDeserializer(config, propertyType, property);
-        }
-    };*/
 
     private static final ConcurrentMap<Class, JsonDeserializer> deserializers = new ConcurrentHashMap<>();
-
-    private static JsonDeserializer enumType = new JsonDeserializer<BizCode>() {
-        @Override
-        public BizCode deserialize(JsonParser jsonParser
-                , DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
-            final String name = jsonParser.readValueAs(String.class);
-
-            return AbstractEnum.valueOf(BizCode.class, name);
-        }
-    };
-
-    private static JsonDeserializer enumType4Coded = new JsonDeserializer<BizCode>() {
-        @Override
-        public BizCode deserialize(JsonParser jsonParser
-                , DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
-            final String code = jsonParser.readValueAs(String.class);
-
-            return AbstractCodedEnum.valueByCode(BizCode.class, code);
-        }
-    };
 
     private static abstract class AbstractEnumJsonDeserializer<T extends AbstractEnum> extends JsonDeserializer<T> {
         private Class<T> clazz = null;
@@ -554,6 +456,7 @@ public abstract class CoreObjectUtils {
                 if($enum == null) {
                     return AbstractCodedEnum.valueOf(getClazz(), value);
                 }
+                return $enum;
             }
             return null;
         }
