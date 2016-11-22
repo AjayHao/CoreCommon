@@ -13,7 +13,9 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.deser.Deserializers;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.JsonValueSerializer;
 import org.apache.commons.lang3.StringUtils;
@@ -103,7 +105,7 @@ public abstract class CoreObjectUtils {
 
     /**
      * 将java实例转换为json对象，按field进行转换<br/>
-     * NOTE: 对特殊的类型进行了自定义，例如AbstractEnum、Quty、Money等<br/>
+     * NOTE: 对特殊的类型进行了自定义，例如AbstractEnum<br/>
      *
      * @param obj
      * @return
@@ -139,8 +141,9 @@ public abstract class CoreObjectUtils {
             ObjectMapper mapper = new ObjectMapper();
             mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            mapper.setDeserializerProvider(dp0);
-            mapper.de
+            //mapper.setDeserializerProvider(dp0);
+            Module m = resolveDeserializerModule(clazz);
+            mapper.registerModule(m);
             Object bean = mapper.readValue(json, clazz);
             return (T)bean;
         } catch (Exception e) {
@@ -150,9 +153,10 @@ public abstract class CoreObjectUtils {
         return null;
     }
 
+
     /**
      * 将json字符串转换为java实例，按照field进行转换<br/>
-     * NOTE: 对特殊的类型进行了自定义，例如AbstractEnum、Quty、Money等<br/>
+     * NOTE: 对特殊的类型进行了自定义，例如AbstractEnum<br/>
      *
      * @param json
      * @param clazz
@@ -168,8 +172,10 @@ public abstract class CoreObjectUtils {
             ObjectMapper mapper = new ObjectMapper();
             mapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            mapper.registerModule(sm);
-            mapper.setDeserializerProvider(dp);
+            //mapper.registerModule(sm);
+            //mapper.setDeserializerProvider(dp);
+            Module m =  resolveDeserializerModuleExt(clazz);
+            mapper.registerModule(m);
             Object bean = mapper.readValue(json, clazz);
             return (T)bean;
         } catch (Exception e) {
@@ -384,15 +390,16 @@ public abstract class CoreObjectUtils {
      * @param <T>
      * @return
      */
-    public static <T> T defaultValue2(Class<T> type) {
+    public static <T> T defaultGenericValue(Class<T> type) {
         return (T) defaultValue(type);
     }
 
     // -------------------------------------------- 辅助方法
     private static SimpleModule sm = null;
 
+
     static {
-        sm = new SimpleModule("aj", new Version(1, 0, 0, "snapshot"));
+        sm = new SimpleModule("serializeModule", new Version(1, 0, 0, "snapshot",null,null));
         sm.addSerializer(AbstractEnum.class, new JsonSerializer<AbstractEnum>() {
             @Override
             public void serialize(AbstractEnum abstractEnum, JsonGenerator jsonGenerator
@@ -406,53 +413,48 @@ public abstract class CoreObjectUtils {
                 }
             }
         });
-
-        sm.addDeserializer(Deserializers)
     }
 
-    private static StdDeserializerProvider dp = new StdDeserializerProvider() {
-        @Override
-        public JsonDeserializer<Object> findValueDeserializer(
-                DeserializationConfig config, JavaType propertyType
-                , BeanProperty property) throws JsonMappingException {
-            if(AbstractCodedEnum.class.isAssignableFrom(propertyType.getRawClass())) {
-                return enumType4Coded;
-            } else if(AbstractEnum.class.isAssignableFrom(propertyType.getRawClass())) {
-                return enumType;
+    private static <T> Module resolveDeserializerModule(Class<T> clazz) {
+        SimpleModule de_sm = new SimpleModule("deserializeModule1", new Version(1, 0, 0, "snapshot",null,null));
+        if(AbstractCodedEnum.class.isAssignableFrom(clazz)) {
+            JsonDeserializer des = deserializers.get(clazz);
+            if(des == null) {
+                final CodedEnumJsonDeserializer deserializer =
+                        new CodedEnumJsonDeserializer((Class<AbstractCodedEnum>)clazz);
+                des = deserializers.putIfAbsent(clazz, deserializer);
+                de_sm.addDeserializer(clazz,(des != null) ? des : (JsonDeserializer)deserializer);
             }
-
-            return super.findValueDeserializer(config, propertyType, property);
-        }
-    };
-
-    private static JsonDeserializer enumType = new JsonDeserializer<BizCode>() {
-        @Override
-        public BizCode deserialize(JsonParser jsonParser
-                , DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
-            final String name = jsonParser.readValueAs(String.class);
-
-            return AbstractEnum.valueOf(BizCode.class, name);
-        }
-    };
-
-    private static JsonDeserializer enumType4Coded = new JsonDeserializer<BizCode>() {
-        @Override
-        public BizCode deserialize(JsonParser jsonParser
-                , DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
-            final String code = jsonParser.readValueAs(String.class);
-
-            return AbstractCodedEnum.valueByCode(BizCode.class, code);
-        }
-    };
-
-    private static StdDeserializer deserializer = new StdDeserializer() {
-        @Override
-        public Object deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
-            return null;
-        }
+        } else if(AbstractEnum.class.isAssignableFrom(clazz)) {
+            JsonDeserializer des = deserializers.get(clazz);
+            if(des == null) {
+                final EnumJsonDeserializer deserializer =
+                        new EnumJsonDeserializer((Class<AbstractEnum>)clazz);
+                des = deserializers.putIfAbsent(clazz, deserializer);
+                de_sm.addDeserializer(clazz,(des != null) ? des : (JsonDeserializer)deserializer);
+            }
+        }/*else{
+            de_sm.addDeserializer(clazz, new TypeDeserializer());
+        }*/
+        return de_sm;
     }
 
-    private static StdDeserializerProvider dp0 = new StdDeserializerProvider() {
+    private static <T> Module resolveDeserializerModuleExt(Class<T> clazz) {
+        SimpleModule de_sm = new SimpleModule("deserializeModule2", new Version(1, 0, 0, "snapshot",null,null));
+        if(AbstractCodedEnum.class.isAssignableFrom(clazz)) {
+            de_sm.addDeserializer(clazz, enumType4Coded);
+        } else if(AbstractEnum.class.isAssignableFrom(clazz)) {
+            JsonDeserializer des = deserializers.get(clazz);
+            if(des == null) {
+                final EnumJsonDeserializer deserializer =
+                        new EnumJsonDeserializer((Class<AbstractEnum>)clazz);
+                des = deserializers.putIfAbsent(clazz, deserializer);
+                de_sm.addDeserializer(clazz,(des != null) ? des : (JsonDeserializer)deserializer);
+            }
+        }
+        return de_sm;
+    }
+   /* private static StdDeserializerProvider dp0 = new StdDeserializerProvider() {
         @Override
         public JsonDeserializer<Object> findValueDeserializer(
                 DeserializationConfig config, JavaType propertyType
@@ -480,9 +482,30 @@ public abstract class CoreObjectUtils {
 
             return super.findValueDeserializer(config, propertyType, property);
         }
-    };
+    };*/
 
     private static final ConcurrentMap<Class, JsonDeserializer> deserializers = new ConcurrentHashMap<>();
+
+    private static JsonDeserializer enumType = new JsonDeserializer<BizCode>() {
+        @Override
+        public BizCode deserialize(JsonParser jsonParser
+                , DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
+            final String name = jsonParser.readValueAs(String.class);
+
+            return AbstractEnum.valueOf(BizCode.class, name);
+        }
+    };
+
+    private static JsonDeserializer enumType4Coded = new JsonDeserializer<BizCode>() {
+        @Override
+        public BizCode deserialize(JsonParser jsonParser
+                , DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
+            final String code = jsonParser.readValueAs(String.class);
+
+            return AbstractCodedEnum.valueByCode(BizCode.class, code);
+        }
+    };
+
     private static abstract class AbstractEnumJsonDeserializer<T extends AbstractEnum> extends JsonDeserializer<T> {
         private Class<T> clazz = null;
 

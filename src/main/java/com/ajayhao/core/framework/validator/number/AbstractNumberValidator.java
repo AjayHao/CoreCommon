@@ -1,7 +1,5 @@
 package com.ajayhao.core.framework.validator.number;
 
-
-import com.ajayhao.core.dto.Money;
 import com.ajayhao.core.enums.BizCode;
 import com.ajayhao.core.framework.validator.Validator;
 import com.ajayhao.core.framework.validator.base.AbstractValidator;
@@ -31,12 +29,6 @@ public abstract class AbstractNumberValidator extends AbstractValidator implemen
         }
 
         Object referObject = getReferObject();
-
-        // money类型必须特殊处理
-        if (target.getClass().equals(Money.class)
-                && !referObject.getClass().equals(Money.class)) {
-            referObject = new Money(referObject.toString(), ((Money) target).getCurrency());
-        }
 
         if (!isValidateTypes(target.getClass(), referObject.getClass())) {
             CoreCommonUtils.raiseValidateException(BizCode.ParamTypeError, "验证类型不一致");

@@ -1,9 +1,10 @@
 package com.ajayhao.core.framework.validator.number;
 
-import com.qiangungun.core.framework.validator.Validator;
+
+import com.ajayhao.core.framework.validator.Validator;
 
 /**
- * Created by wu.charles on 2014/12/15.
+ * 小于等于验证器
  */
 public class LeValidator extends AbstractNumberValidator implements Validator {
     public LeValidator(Object referObject) {

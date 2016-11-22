@@ -1,7 +1,6 @@
 package com.ajayhao.core.util;
 
 import com.ajayhao.core.base.*;
-import com.ajayhao.core.dto.Money;
 import com.ajayhao.core.enums.BizCode;
 import com.ajayhao.core.exception.BizException;
 import com.ajayhao.core.exception.ValidateException;
@@ -312,106 +311,6 @@ public abstract class CoreCommonUtils {
      */
     public static BigDecimal zeroToNull(BigDecimal value) {
         return value == null || is0(value) ? null : value;
-    }
-
-    /**
-     * 根据份额值和小数位数，构造货币实例
-     *
-     * @param cent
-     * @param currencyCode
-     * @return
-     */
-    public static Money fromCent(String cent, String currencyCode) {
-        if(StringUtils.isEmpty(cent)) {
-            return null;
-        }
-
-        return new Money(Long.parseLong(cent)
-                , Currency.getInstance(currencyCode));
-    }
-
-    /**
-     * 根据份额值和小数位数，构造货币实例
-     *
-     * @param cent
-     * @param currencyCode
-     * @return
-     */
-    public static Money fromCent(BigInteger cent, String currencyCode) {
-        if(cent == null) {
-            return null;
-        }
-
-        return new Money(cent.longValue()
-                , Currency.getInstance(currencyCode));
-    }
-
-    /**
-     * 根据金额值和小数位数，构造货币实例
-     *
-     * @param cent
-     * @param currencyCode
-     * @return
-     */
-    public static Money fromCent(long cent, String currencyCode) {
-        return new Money(cent
-                , Currency.getInstance(currencyCode));
-    }
-
-    /**
-     * 获取金额的整数值
-     *
-     * @param money
-     * @return
-     */
-    public static BigInteger moneyValue(Money money) {
-        if(money == null) {
-            return null;
-        }
-
-        return BigInteger.valueOf(money.getCent());
-    }
-
-    /**
-     * 获取金额的整数值
-     *
-     * @param money
-     * @return
-     */
-    public static Long moneyValueL(Money money) {
-        if(money == null) {
-            return null;
-        }
-
-        return money.getCent();
-    }
-
-    /**
-     * 返回最大的金额
-     *
-     * @param left
-     * @param right
-     * @return
-     */
-    public static Money max(Money left, Money right) {
-        new ValidatorBuilder().notNull("不能为null").build().validate(left);
-        new ValidatorBuilder().notNull("不能为null").build().validate(right);
-
-        return left.compareTo(right) >=0 ? left : right;
-    }
-
-    /**
-     * 返回最小的金额
-     *
-     * @param left
-     * @param right
-     * @return
-     */
-    public static Money min(Money left, Money right) {
-        new ValidatorBuilder().notNull("不能为null").build().validate(left);
-        new ValidatorBuilder().notNull("不能为null").build().validate(right);
-
-        return left.compareTo(right) >=0 ? right : left;
     }
 
     /**
