@@ -112,7 +112,8 @@ public class BizCode extends AbstractCodedEnum implements Serializable {
             = new BizCode("LoginFail", "028", "登录失败");
 
     public static final BizCode LogoutStatus
-            = new BizCode("logoutStatus", "029", "未登录");
+            = new BizCode("LogoutStatus", "029", "未登录");
+
 
     protected BizCode() {
         ; // 解决反序列化无法构造新实例的问题！！
