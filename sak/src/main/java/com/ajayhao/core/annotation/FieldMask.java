@@ -1,7 +1,3 @@
-/**
- * Qiangungun.com Inc.
- * Copyright (c) 2015-2015 All Rights Reserved.
- */
 package com.ajayhao.core.annotation;
 
 import java.lang.annotation.Documented;

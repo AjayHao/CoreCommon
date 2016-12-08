@@ -179,6 +179,7 @@
         <itextasian.version>5.2.0</itextasian.version>
         <poi.version>3.11</poi.version>
         <jxls.version>2.3.0</jxls.version>
+        <jxls-poi.version>1.0.11</jxls-poi.version>
         <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Export ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
     </properties>
 
@@ -201,6 +202,12 @@
                 <groupId>org.jxls</groupId>
                 <artifactId>jxls</artifactId>
                 <version>${jxls.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jxls</groupId>
+                <artifactId>jxls-poi</artifactId>
+                <version>${jxls-poi.version}</version>
             </dependency>
 
             <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Export ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
