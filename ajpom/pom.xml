@@ -32,7 +32,7 @@
         <hamcrest.version>1.3</hamcrest.version>
         <core-unittest.version>1.0.0-SNAPSHOT</core-unittest.version>
         <spring-test.version>3.2.5.RELEASE</spring-test.version>
-        <unitils.version>3.3</unitils.version>
+        <unitils.version>3.4.3</unitils.version>
         <hsqldb.version>2.3.0</hsqldb.version>
         <jmockit-coverage.version>0.999.24</jmockit-coverage.version>
         <jmockit.version>1.8-SNAPSHOT</jmockit.version>
@@ -1355,7 +1355,7 @@
                 <version>${unitils.version}</version>
                 <scope>test</scope>
 
-                <!--<exclusions>
+                <exclusions>
                     <exclusion>
                         <groupId>commons-logging</groupId>
                         <artifactId>commons-logging</artifactId>
@@ -1366,11 +1366,27 @@
                         <artifactId>commons-collections</artifactId>
                     </exclusion>
 
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>org.unitils</groupId>
+                <artifactId>unitils-testng</artifactId>
+                <version>${unitils.version}</version>
+                <scope>test</scope>
+
+                <exclusions>
                     <exclusion>
-                        <groupId>commons-lang</groupId>
-                        <artifactId>commons-lang</artifactId>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
                     </exclusion>
-                </exclusions>-->
+
+                    <exclusion>
+                        <groupId>commons-collections</groupId>
+                        <artifactId>commons-collections</artifactId>
+                    </exclusion>
+
+                </exclusions>
             </dependency>
 
             <dependency>
@@ -1379,7 +1395,7 @@
                 <version>${unitils.version}</version>
                 <scope>test</scope>
 
-                <!--<exclusions>
+                <exclusions>
                     <exclusion>
                         <groupId>commons-logging</groupId>
                         <artifactId>commons-logging</artifactId>
@@ -1393,11 +1409,7 @@
                         <artifactId>slf4j-nop</artifactId>
                     </exclusion>
 
-                    <exclusion>
-                        <groupId>commons-lang</groupId>
-                        <artifactId>commons-lang</artifactId>
-                    </exclusion>
-                </exclusions>-->
+                </exclusions>
             </dependency>
 
             <dependency>
@@ -1406,12 +1418,12 @@
                 <version>${unitils.version}</version>
                 <scope>test</scope>
 
-                <!--<exclusions>
+                <exclusions>
                     <exclusion>
                         <groupId>commons-logging</groupId>
                         <artifactId>commons-logging</artifactId>
                     </exclusion>
-                </exclusions>-->
+                </exclusions>
             </dependency>
 
             <dependency>
@@ -1420,7 +1432,7 @@
                 <version>${unitils.version}</version>
                 <scope>test</scope>
 
-                <!--<exclusions>
+                <exclusions>
                     <exclusion>
                         <groupId>org.springframework</groupId>
                         <artifactId>spring-tx</artifactId>
@@ -1445,7 +1457,7 @@
                         <groupId>org.springframework</groupId>
                         <artifactId>spring-beans</artifactId>
                     </exclusion>
-                </exclusions>-->
+                </exclusions>
             </dependency>
 
             <dependency>
