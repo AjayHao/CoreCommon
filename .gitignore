@@ -1,2 +1,5 @@
 .idea/*
 public-pom/public-pom.iml
+core-common/core-common.iml
+public-pom/.idea/*
+core-common/.idea/*
