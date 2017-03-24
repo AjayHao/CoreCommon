@@ -38,6 +38,7 @@
         <logback.version>1.1.7</logback.version>
         <janino.version>2.6.1</janino.version>
         <slf4j-api.version>1.7.21</slf4j-api.version>
+        <slf4j-log4j12.version>1.7.21</slf4j-log4j12.version>
         <jcl-over-slf4j.version>1.7.21</jcl-over-slf4j.version>
         <log4j-over-slf4j.version>1.7.21</log4j-over-slf4j.version>
         <log4j-jcl.version>2.1</log4j-jcl.version>
@@ -1240,6 +1241,13 @@
                 <groupId>org.slf4j</groupId>
                 <artifactId>log4j-over-slf4j</artifactId>
                 <version>${log4j-over-slf4j.version}</version>
+            </dependency>
+
+            <!-- 把log4j日志与slf4j兼容 -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-log4j12</artifactId>
+                <version>${slf4j-log4j12.version}</version>
             </dependency>
 
             <!-- 把log4j日志重定向到commons log -->
