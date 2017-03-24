@@ -1,11 +1,9 @@
-package com.ajayhao.core.util.test.testcase;
-
-import com.ajayhao.core.base.AbstractModel;
+package com.ajayhao.core.util.testcase;
 
 /**
  * Created by haozhenjie on 2016/11/22.
  */
-public class UserModel extends AbstractModel{
+public class User {
     private String userId;
     private String userName;
     private int age;
@@ -32,9 +30,5 @@ public class UserModel extends AbstractModel{
 
     public void setAge(int age) {
         this.age = age;
-    }
-
-    public String toString(){
-        return super.toString();
     }
 }

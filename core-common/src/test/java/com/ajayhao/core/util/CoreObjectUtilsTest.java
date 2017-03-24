@@ -1,11 +1,11 @@
-package com.ajayhao.core.util.test;
+package com.ajayhao.core.util;
 
 import com.ajayhao.core.enums.BizCode;
 import com.ajayhao.core.util.CoreObjectUtils;
-import com.ajayhao.core.util.test.testcase.Apkind;
-import com.ajayhao.core.util.test.testcase.MHTStepCode;
-import com.ajayhao.core.util.test.testcase.User;
-import com.ajayhao.core.util.test.testcase.UserModel;
+import com.ajayhao.core.util.testcase.Apkind;
+import com.ajayhao.core.util.testcase.MHTStepCode;
+import com.ajayhao.core.util.testcase.User;
+import com.ajayhao.core.util.testcase.UserModel;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;

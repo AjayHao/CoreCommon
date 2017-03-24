@@ -1,4 +1,4 @@
-package com.ajayhao.core.util.test.testcase;
+package com.ajayhao.core.util.testcase;
 
 import com.ajayhao.core.base.AbstractEnum;
 
