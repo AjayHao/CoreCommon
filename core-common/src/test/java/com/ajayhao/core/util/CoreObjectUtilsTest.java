@@ -57,6 +57,21 @@ public class CoreObjectUtilsTest {
     }
 
     @Test
+    public void test_json2Object_StringNum() {
+        String jsonStr = "1000";
+        String u = CoreObjectUtils.json2Object(jsonStr, String.class);
+        Assert.assertEquals(u, "1000");
+    }
+
+    @Test
+    public void test_json2Object_String() {
+        String jsonStr = "ajay";
+        String u = CoreObjectUtils.json2Object(jsonStr, String.class);
+        Assert.assertNull(u);
+    }
+
+
+    @Test
     public void test_json2Object_normalObj() {
         String jsonStr = "{\"userId\":\"100\",\"userName\":\"normlObj\",\"age\":10}";
         User u = CoreObjectUtils.json2Object(jsonStr, User.class);

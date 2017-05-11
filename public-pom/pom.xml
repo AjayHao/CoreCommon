@@ -1243,13 +1243,6 @@
                 <version>${log4j-over-slf4j.version}</version>
             </dependency>
 
-            <!-- 把log4j日志与slf4j兼容 -->
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-log4j12</artifactId>
-                <version>${slf4j-log4j12.version}</version>
-            </dependency>
-
             <!-- 把log4j日志重定向到commons log -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
@@ -1560,18 +1553,17 @@
                 <plugin>
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-maven-plugin</artifactId>
-                    <version>${maven-jetty-plugin.version}</version>
                     <configuration>
-                        <!--<contextPath>/</contextPath>-->
                         <scanIntervalSeconds>2</scanIntervalSeconds>
                         <reload>automatic</reload>
-                        <!--<overrideWebXml>src/main/resources/override-web.xml</overrideWebXml>-->
-                        <requestLog implementation="org.mortbay.jetty.NCSARequestLog">
-                            <filename>logs/yyyy_mm_dd.request.log</filename>
-                            <retainDays>90</retainDays>
+                        <requestLog implementation="org.eclipse.jetty.server.NCSARequestLog">
+                            <filename>target/access-yyyy_mm_dd.log</filename>
+                            <filenameDateFormat>yyyy_MM_dd</filenameDateFormat>
+                            <logDateFormat>yyyy-MM-dd HH:mm:ss</logDateFormat>
+                            <logTimeZone>GMT+8:00</logTimeZone>
                             <append>true</append>
+                            <retainDays>90</retainDays>
                             <extended>false</extended>
-                            <logTimeZone>GMT</logTimeZone>
                         </requestLog>
                     </configuration>
                 </plugin>
