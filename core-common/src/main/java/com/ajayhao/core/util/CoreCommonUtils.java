@@ -536,55 +536,19 @@ public abstract class CoreCommonUtils {
     }
 
     /**
-     * 启动pipe line
+     * 判断任一匹配
      *
-     * @param invoker
-     * @param request
+     * @param src
+     * @param any
+     * @return
      */
-    /*public static <P extends PhaseCode> void invoke(OutboundInvoker invoker
-            , AbstractRequest request, Class<P> phaseCodeClass) {
-        String startingPhase = request.getExtField(FlowAttribute.STARTING_PHASE.name());
-
-        if(StringUtils.isNoneBlank(startingPhase)) {
-            invoker.start(PhaseCode.valueOf(phaseCodeClass, startingPhase));
-        } else {
-            invoker.start();
+    public static <T> boolean equalsAny(T src, T... any) {
+        for (T value : any) {
+            if ((src == null && value == null)
+                    || src.equals(value)) {
+                return true;
+            }
         }
-    }*/
-
-
-    // --------------------------------------- private methods
-    /*private static Method get_uuid = null;
-    private static Method get_uuidb = null;
-    private static Method set_digistMsg = null;
-    private static Method get_applicationName = null;
-
-    // XTS information；
-    private static Method get_businessActivity = null;
-    private static Method get_xts_activityId = null;
-
-    static {
-        try {
-            final Class<?> clazz = Class.forName(
-                    "com.qiangungun.monitor.client.util.MContextUtils");
-            get_uuid = clazz.getDeclaredMethod("getUuid");
-            get_uuidb = clazz.getDeclaredMethod("getUuidb");
-            get_applicationName = clazz.getDeclaredMethod("currAppName");
-            set_digistMsg = clazz.getDeclaredMethod("setDigistMsg",String.class);
-        } catch (Throwable e) {
-            ; // ignore
-        }
-
-        try {
-            final Class<?> xtsTLSClass = Class.forName(
-                    "com.qiangungun.xts.client.holder.BusinessActivityContextHolder");
-            get_businessActivity = xtsTLSClass.getDeclaredMethod("getBusinessActivity");
-
-            final Class<?> xtsInfoClass = Class.forName(
-                    "com.qiangungun.xts.service.facade.model.BusinessActivity");
-            get_xts_activityId = xtsInfoClass.getDeclaredMethod("getActivityId");
-        } catch (Throwable e) {
-            ; // ignore
-        }
-    }*/
+        return false;
+    }
 }
