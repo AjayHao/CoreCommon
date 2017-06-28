@@ -131,7 +131,7 @@
         <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ SOA ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
         <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ MQ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-        <rocketmq-client.version>3.2.6</rocketmq-client.version>
+        <rocketmq.version>4.1.0-incubating</rocketmq.version>
         <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ MQ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
         <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Cache ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
@@ -210,9 +210,21 @@
 
             <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ MQ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
             <dependency>
-                <groupId>com.alibaba.rocketmq</groupId>
+                <groupId>org.apache.rocketmq</groupId>
                 <artifactId>rocketmq-client</artifactId>
-                <version>${rocketmq-client.version}</version>
+                <version>${rocketmq.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.rocketmq</groupId>
+                <artifactId>rocketmq-remoting</artifactId>
+                <version>${rocketmq.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.rocketmq</groupId>
+                <artifactId>rocketmq-common</artifactId>
+                <version>${rocketmq.version}</version>
             </dependency>
             <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ MQ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
