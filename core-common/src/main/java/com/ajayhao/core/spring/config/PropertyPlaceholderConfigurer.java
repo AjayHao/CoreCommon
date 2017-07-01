@@ -13,7 +13,7 @@ import java.util.Properties;
 /**
  * Created by AjayHao on 2017/6/30.
  */
-public class PropertyPlaceholderConfigurer extends org.springframework.beans.factory.config.PropertyPlaceholderConfigurer implements InitializingBean {
+public class PropertyPlaceholderConfigurer extends org.springframework.beans.factory.config.PropertyPlaceholderConfigurer{
 
     public static final String USER_HOME = System.getProperty("user.home");
     public static final String WEB_RES_CLASS = "org.springframework.web.context.support.ServletContextResource";
@@ -121,7 +121,4 @@ public class PropertyPlaceholderConfigurer extends org.springframework.beans.fac
         return file;
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-    }
 }
