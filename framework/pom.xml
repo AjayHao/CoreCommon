@@ -13,6 +13,19 @@
     <url>http://maven.apache.org</url>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.build.jdk.version>1.7</project.build.jdk.version>
+
+        <maven-javadoc-plugin.version>2.9.1</maven-javadoc-plugin.version>
+        <maven-compiler-plugin.version>3.5</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>2.19</maven-surefire-plugin.version>
+        <maven-source-plugin.version>2.2.1</maven-source-plugin.version>
+        <maven-svn-plugin.version>1.6</maven-svn-plugin.version>
+        <maven-jar-plugin.version>2.6</maven-jar-plugin.version>
+        <maven-war-plugin.version>2.6</maven-war-plugin.version>
+        <maven-scm-plugin.version>1.8.1</maven-scm-plugin.version>
+        <maven-jetty-plugin.version>9.4.0.RC1</maven-jetty-plugin.version>
+
         <testng.version>6.10</testng.version>
         <slf4j-api.version>1.7.21</slf4j-api.version>
         <commons-lang3.version>3.5</commons-lang3.version>
@@ -63,5 +76,134 @@
         </dependency>
 
     </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${maven-javadoc-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>attach-javadocs</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
+                    <configuration>
+                        <testFailureIgnore>false</testFailureIgnore>
+                        <!--<argLine>-Dfile.encoding=UTF-8 -Dglobal.config.path=${project.basedir}/target -DtestEnv=unitest</argLine>-->
+                        <argLine>-Dfile.encoding=UTF-8 -Dglobal.config.path=${project.basedir}/target</argLine>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>${maven-source-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>attach-sources</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${maven-jar-plugin.version}</version>
+                    <configuration>
+                        <!--<jarName>${project.artifactId}-${project.version}-${SVN.committedRevision}</jarName>-->
+                        <!--<jarName>${project.artifactId}-${project.version}-${buildNumber}</jarName>-->
+                        <jarName>${project.artifactId}-${project.version}</jarName>
+                        <!--<archive>
+                            <index>true</index>
+                            <manifest>
+                                <addClasspath>true</addClasspath>
+                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                            </manifest>
+                            <manifestEntries>
+                                <Implementation-Version>${project.artifactId}-${project.version}-${SVN.committedRevision}-${timestamp}</Implementation-Version>
+                                <Specification-Version>${project.artifactId}-${project.version}-${SVN.committedRevision}-${timestamp}</Specification-Version>
+                                <Build-Time>${timestamp}</Build-Time>
+                            </manifestEntries>
+                        </archive>-->
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>${maven-war-plugin.version}</version>
+                    <configuration>
+                        <!--<webappDirectory>src/main/webapp/</webappDirectory>-->
+                        <!--<warName>${project.artifactId}-${project.version}-${SVN.committedRevision}</warName>-->
+                        <!--<warName>${project.artifactId}-${project.version}-${buildNumber}</warName>-->
+                        <warName>${project.artifactId}-${project.version}</warName>
+                    </configuration>
+                    <!--<executions>
+                        <execution>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>war</goal>
+                            </goals>
+                            <configuration>
+                                <userCache>false</userCache>
+                            </configuration>
+                        </execution>
+                    </executions>-->
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                    <configuration>
+                        <source>1.7</source>
+                        <target>1.7</target>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-scm-plugin</artifactId>
+                    <version>${maven-scm-plugin.version}</version>
+                </plugin>
+
+
+                <plugin>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-maven-plugin</artifactId>
+                    <configuration>
+                        <scanIntervalSeconds>2</scanIntervalSeconds>
+                        <reload>automatic</reload>
+                        <requestLog implementation="org.eclipse.jetty.server.NCSARequestLog">
+                            <filename>target/access-yyyy_mm_dd.log</filename>
+                            <filenameDateFormat>yyyy_MM_dd</filenameDateFormat>
+                            <logDateFormat>yyyy-MM-dd HH:mm:ss</logDateFormat>
+                            <logTimeZone>GMT+8:00</logTimeZone>
+                            <append>true</append>
+                            <retainDays>90</retainDays>
+                            <extended>false</extended>
+                        </requestLog>
+                    </configuration>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+    </build>
 
 </project>
